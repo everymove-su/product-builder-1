@@ -1,109 +1,143 @@
 :root {
-    /* Dark Theme Palette (inspired by chaechae.life) */
-    --background-color: #1a1a1a; /* Darker background */
-    --text-color: #f0f0f0; /* Light text */
-    --accent-color: #ffee58; /* Bright yellow for highlights */
-    --ball-background: #424242; /* Darker gray for balls */
-    --ball-text-color: #f0f0f0; /* Text color for numbers on balls */
-    --ball-shadow: 0 0 10px rgba(255,255,255,0.1), 0 0 20px rgba(255,255,255,0.05); /* Softer white glow */
-    --button-background: #424242; /* Match ball background */
-    --button-text-color: #ffee58; /* Yellow text for button */
-    --button-border-color: #ffee58; /* Yellow border */
-    --button-hover-bg: #ffee58;
-    --button-hover-text: #1a1a1a;
+    /* Dark Theme Palette */
+    --background-color: #2c3e50;
+    --text-color: #ecf0f1;
+    --accent-color: #3498db;
+    --ball-background: #424242;
+    --ball-text-color: #f0f0f0;
+    --ball-shadow: 0 0 10px rgba(255,255,255,0.1), 0 0 20px rgba(255,255,255,0.05);
+    --button-background: #34495e;
+    --button-text-color: #ecf0f1; /* Changed to general text color */
+    --button-border-color: var(--accent-color);
+    --button-hover-bg: var(--accent-color);
+    --button-hover-text: var(--background-color);
     --button-glow: 0 0 15px var(--accent-color);
+    --input-background: #3a506b;
+    --input-border: #2980b9;
+    --input-text: #ecf0f1;
 }
 
 :root[data-theme="light"] {
-    /* Light Theme Palette (similar to original light, but adjusted for new feel) */
-    --background-color: #f5f5f5; /* Lighter background */
-    --text-color: #333333; /* Dark text */
-    --accent-color: #2196f3; /* Blue for highlights */
-    --ball-background: #e0e0e0; /* Light gray for balls */
-    --ball-text-color: #333333; /* Text color for numbers on balls */
+    /* Light Theme Palette */
+    --background-color: #ecf0f1;
+    --text-color: #2c3e50;
+    --accent-color: #2980b9;
+    --ball-background: #e0e0e0;
+    --ball-text-color: #2c3e50;
     --ball-shadow: 0 0 10px rgba(0,0,0,0.1), 0 0 20px rgba(0,0,0,0.05);
-    --button-background: #2196f3; /* Blue button */
-    --button-text-color: #ffffff; /* White text for button */
-    --button-border-color: #2196f3;
-    --button-hover-bg: #1976d2;
+    --button-background: #bdc3c7;
+    --button-text-color: #2c3e50;
+    --button-border-color: var(--accent-color);
+    --button-hover-bg: var(--accent-color);
     --button-hover-text: #ffffff;
     --button-glow: 0 0 15px var(--accent-color);
+    --input-background: #ffffff;
+    --input-border: #bdc3c7;
+    --input-text: #2c3e50;
 }
 
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: 'Roboto', sans-serif; /* Changed font to Roboto or similar */
+    font-family: 'Roboto', sans-serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    /* New background pattern: subtle stars/dots */
-    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
-    background-size: 20px 20px;
+    background-image: none; /* Removed specific background pattern */
     transition: background-color 0.5s ease, color 0.5s ease;
-    overflow: hidden; /* Prevent scrollbar if background pattern creates one */
+    overflow-y: auto; /* Allow scrolling for multiple sets */
+    padding: 20px;
 }
 
 .container {
     text-align: center;
-    padding: 2.5rem; /* Increased padding */
-    background: rgba(0, 0, 0, 0.4); /* Darker, more prominent container */
-    border-radius: 20px; /* More rounded corners */
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6); /* Deeper shadow */
+    padding: 2.5rem;
+    background: var(--button-background);
+    border-radius: 10px; /* Slightly less rounded */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4); /* Softer shadow */
     transition: background 0.5s ease, box-shadow 0.5s ease;
-    max-width: 500px; /* Constrain width for cleaner look */
+    max-width: 800px; /* Wider container for controls */
     width: 90%;
-    position: relative; /* For theme toggle positioning */
-    border: 1px solid rgba(255,255,255,0.1); /* Subtle border */
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.05); /* Softer border */
 }
 
 :root[data-theme="light"] .container {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    border: 1px solid rgba(0,0,0,0.1);
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
 h1 {
-    font-size: 2.8rem; /* Larger heading */
+    font-size: 2.5rem; /* Slightly smaller heading */
     color: var(--accent-color);
-    text-shadow: 0 0 15px var(--accent-color), 0 0 5px rgba(255,255,255,0.2); /* Enhanced glow */
-    margin-bottom: 2.5rem;
-    letter-spacing: 1px;
+    text-shadow: none; /* Removed glow effect */
+    margin-bottom: 1.5rem;
+    letter-spacing: normal;
 }
 
-#lotto-balls-container {
-    display: flex; /* Reverted to flex for 6 balls in a row */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.2rem; /* Increased gap */
-    margin-bottom: 3rem; /* More space below balls */
-    flex-wrap: wrap; /* Ensure wrapping if needed, but primarily one row */
-    max-width: none; /* Remove max-width for simple row */
-    margin-left: 0;
-    margin-right: 0;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.controls input[type="number"],
+.controls input[type="text"] {
+    background-color: var(--input-background);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    padding: 0.5rem 0.8rem;
+    font-size: 1rem;
+    width: 180px; /* Standard width for inputs */
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.controls input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-color), 0.2);
 }
 
 #generate-button {
     background-color: var(--button-background);
     color: var(--button-text-color);
     border: 2px solid var(--button-border-color);
-    padding: 1.2rem 2.5rem; /* Larger button */
-    font-size: 1.3rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem; /* Slightly smaller button */
     font-weight: bold;
-    border-radius: 50px;
+    border-radius: 30px; /* Slightly less rounded */
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     letter-spacing: 0.5px;
+    margin-bottom: 2rem;
 }
 
 #generate-button:hover {
     background-color: var(--button-hover-bg);
     color: var(--button-hover-text);
     box-shadow: var(--button-glow);
-    transform: translateY(-2px); /* Slight lift effect */
+    transform: none; /* Remove lift effect */
 }
 
 #theme-toggle {
@@ -113,18 +147,41 @@ h1 {
     background-color: var(--button-background);
     color: var(--text-color);
     border: 1px solid var(--accent-color);
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem; /* Slightly smaller for toggle */
+    padding: 0.4rem 0.8rem; /* Smaller padding */
+    font-size: 0.8rem;
     font-weight: normal;
-    border-radius: 25px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
     z-index: 1000;
 }
 
 #theme-toggle:hover {
     background-color: var(--accent-color);
     color: var(--button-background);
-    box-shadow: var(--button-glow);
+    box-shadow: none; /* Removed glow on hover */
+}
+
+#lotto-results-container {
+    display: flex;
+    flex-direction: column; /* Stack sets vertically */
+    gap: 1.5rem; /* Gap between sets */
+    width: 100%;
+}
+
+.lotto-set {
+    display: flex;
+    flex-wrap: wrap; /* Allow balls to wrap within a set if needed */
+    justify-content: center;
+    gap: 0.8rem; /* Gap between balls within a set */
+    padding: 1rem;
+    background: rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+}
+
+:root[data-theme="light"] .lotto-set {
+    background: rgba(255,255,255,0.7);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
 }

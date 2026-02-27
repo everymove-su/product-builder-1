@@ -14,39 +14,36 @@ class LottoBall extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 65px; /* Adjusted size for new design */
-                height: 65px; /* Adjusted size for new design */
+                width: 60px; /* Adjusted size for new design */
+                height: 60px; /* Adjusted size for new design */
                 background-color: var(--ball-background); /* Use CSS variable */
                 border-radius: 50%;
                 box-shadow: var(--ball-shadow); /* Use CSS variable */
-                font-size: 1.8rem; /* Larger font size */
+                font-size: 1.7rem; /* Adjusted font size */
                 font-weight: bold;
                 color: var(--ball-text-color); /* Use specific ball text color variable */
-                transition: background-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
-                margin: 5px; /* Small margin around balls for visual separation */
+                transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
             }
         `;
 
         shadow.appendChild(style);
         shadow.appendChild(wrapper);
         wrapper.appendChild(numberText);
-        this._numberText = numberText; // Store reference to update later
+        this._numberText = numberText;
     }
 
     connectedCallback() {
         this._numberText.textContent = this.getAttribute('number');
-        // No longer need to manually set color if var(--ball-text-color) works
     }
 
     static get observedAttributes() {
-        return ['number']; // No longer observing data-text-color
+        return ['number'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'number' && this._numberText) {
             this._numberText.textContent = newValue;
         }
-        // No longer handling data-text-color via attributeChangedCallback
     }
 }
 
@@ -54,8 +51,10 @@ customElements.define('lotto-ball', LottoBall);
 
 document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-button');
-    const lottoBallsContainer = document.getElementById('lotto-balls-container');
-    // const rowIndicatorsContainer = document.getElementById('row-indicators-container'); // Removed
+    const numSetsInput = document.getElementById('num-sets');
+    const includedNumbersInput = document.getElementById('included-numbers');
+    const excludedNumbersInput = document.getElementById('excluded-numbers');
+    const lottoResultsContainer = document.getElementById('lotto-results-container');
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
@@ -67,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
-        // No need to re-render balls here; CSS variables will handle it
     }
 
     if (themeToggle) {
@@ -88,53 +86,71 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme('dark');
     }
 
-    function generateLottoNumbers() {
-        const numbers = new Set();
-        while (numbers.size < 6) { // Reverted to 6 numbers per set
-            const randomNumber = Math.floor(Math.random() * 45) + 1;
-            numbers.add(randomNumber);
-        }
-        return Array.from(numbers);
+    function parseNumbersInput(inputString) {
+        if (!inputString) return [];
+        return inputString.split(',')
+                          .map(s => parseInt(s.trim()))
+                          .filter(n => !isNaN(n) && n >= 1 && n <= 45);
     }
 
-    function displayNumbers(generate = true) {
-        if (!lottoBallsContainer) return;
-        lottoBallsContainer.innerHTML = '';
-        // if (rowIndicatorsContainer) { // Removed
-        //     rowIndicatorsContainer.innerHTML = ''; // Removed
-        // }
+    function generateLottoNumbers(included = [], excluded = []) {
+        const lottoNumbers = new Set(included);
+        const availableNumbers = Array.from({ length: 45 }, (_, i) => i + 1)
+                                      .filter(n => !excluded.includes(n) && !included.includes(n));
 
-        const numbers = generate ? generateLottoNumbers() : Array(6).fill(''); // Reverted to 6 placeholders
+        // Ensure included numbers are valid and don't conflict with excluded
+        if (included.some(n => excluded.includes(n))) {
+            console.error("Included numbers conflict with excluded numbers!");
+            // Handle error, perhaps throw or return empty
+            return [];
+        }
+        if (included.length > 6) {
+            console.error("Too many included numbers!");
+            return [];
+        }
 
-        // const computedHtmlStyles = getComputedStyle(htmlElement); // Removed
-        // const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim(); // Removed
+        while (lottoNumbers.size < 6 && availableNumbers.length > 0) {
+            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+            const randomNumber = availableNumbers.splice(randomIndex, 1)[0];
+            lottoNumbers.add(randomNumber);
+        }
 
-        // // Removed row indicator generation
-        // if (rowIndicatorsContainer) {
-        //     for (let i = 1; i <= 5; i++) {
-        //         const indicator = document.createElement('div');
-        //         indicator.classList.add('row-indicator');
-        //         indicator.textContent = i;
-        //         indicator.style.color = currentTextColor;
-        //         rowIndicatorsContainer.appendChild(indicator);
-        //     }
-        // }
+        // If after trying to fill, we still don't have 6 numbers (e.g., due to too many excluded)
+        if (lottoNumbers.size < 6) {
+             console.warn("Could not generate 6 unique numbers with given constraints. Resulting set size: " + lottoNumbers.size);
+        }
 
-        numbers.forEach(number => {
-            const lottoBall = document.createElement('lotto-ball');
-            lottoBall.setAttribute('number', number);
-            // lottoBall.setAttribute('data-text-color', currentTextColor); // Removed
-            lottoBallsContainer.appendChild(lottoBall);
-        });
+        return Array.from(lottoNumbers).sort((a, b) => a - b);
+    }
+
+    function displayLottoSets() {
+        if (!lottoResultsContainer) return;
+        lottoResultsContainer.innerHTML = ''; // Clear previous results
+
+        const numSets = parseInt(numSetsInput.value) || 1;
+        const included = parseNumbersInput(includedNumbersInput.value);
+        const excluded = parseNumbersInput(excludedNumbersInput.value);
+
+        for (let i = 0; i < numSets; i++) {
+            const lottoSetDiv = document.createElement('div');
+            lottoSetDiv.classList.add('lotto-set');
+
+            const numbers = generateLottoNumbers(included, excluded);
+
+            numbers.forEach(number => {
+                const lottoBall = document.createElement('lotto-ball');
+                lottoBall.setAttribute('number', number);
+                lottoSetDiv.appendChild(lottoBall);
+            });
+            lottoResultsContainer.appendChild(lottoSetDiv);
+        }
     }
 
     if (generateButton) {
-        generateButton.addEventListener('click', () => {
-            displayNumbers(true);
-            generateButton.disabled = false;
-            generateButton.textContent = 'Generate Numbers';
-        });
+        generateButton.addEventListener('click', displayLottoSets);
     }
 
-    displayNumbers(false);
+    // Initial display of one empty set
+    numSetsInput.value = 1; // Default to 1 set
+    displayLottoSets();
 });

@@ -3,15 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
+    <title>Advanced Lotto Number Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="container">
-        <h1>Lotto Number Generator</h1>
+        <h1>Advanced Lotto Number Generator</h1>
         <button id="theme-toggle">Switch to Light Mode</button>
-        <div id="lotto-balls-container"></div>
-        <button id="generate-button">Generate Numbers</button>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="num-sets">Number of Sets (1-10):</label>
+                <input type="number" id="num-sets" value="1" min="1" max="10">
+            </div>
+            <div class="control-group">
+                <label for="included-numbers">Include Numbers (e.g., 1,5,10):</label>
+                <input type="text" id="included-numbers" placeholder="Comma-separated (1-45)">
+            </div>
+            <div class="control-group">
+                <label for="excluded-numbers">Exclude Numbers (e.g., 20,30):</label>
+                <input type="text" id="excluded-numbers" placeholder="Comma-separated (1-45)">
+            </div>
+        </div>
+
+        <button id="generate-button">Generate Lotto Numbers</button>
+        
+        <div id="lotto-results-container">
+            <!-- Lotto sets will be displayed here -->
+        </div>
     </main>
     <script src="main.js" type="module"></script>
 </body>
