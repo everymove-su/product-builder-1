@@ -7,7 +7,6 @@ class LottoBall extends HTMLElement {
         wrapper.setAttribute('class', 'ball');
 
         const numberText = document.createElement('span');
-        // numberText.textContent = this.getAttribute('number'); // Set in connectedCallback
 
         const style = document.createElement('style');
         style.textContent = `
@@ -15,14 +14,16 @@ class LottoBall extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 50px; /* Smaller width */
-                height: 50px; /* Smaller height */
-                background: var(--ball-background, linear-gradient(145deg, #f0f0f0, #cacaca));
+                width: 65px; /* Adjusted size for new design */
+                height: 65px; /* Adjusted size for new design */
+                background-color: var(--ball-background); /* Use CSS variable */
                 border-radius: 50%;
-                box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
-                font-size: 1.2rem; /* Smaller font size */
+                box-shadow: var(--ball-shadow); /* Use CSS variable */
+                font-size: 1.8rem; /* Larger font size */
                 font-weight: bold;
-                /* color is set dynamically via JS in connectedCallback */
+                color: var(--ball-text-color); /* Use specific ball text color variable */
+                transition: background-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+                margin: 5px; /* Small margin around balls for visual separation */
             }
         `;
 
@@ -33,25 +34,19 @@ class LottoBall extends HTMLElement {
     }
 
     connectedCallback() {
-        // Set text content and color when connected to DOM
         this._numberText.textContent = this.getAttribute('number');
-        const textColor = this.getAttribute('data-text-color');
-        if (this._numberText && textColor) {
-            this._numberText.style.color = textColor;
-        }
+        // No longer need to manually set color if var(--ball-text-color) works
     }
 
     static get observedAttributes() {
-        return ['number', 'data-text-color'];
+        return ['number']; // No longer observing data-text-color
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'number' && this._numberText) {
             this._numberText.textContent = newValue;
         }
-        if (name === 'data-text-color' && this._numberText) {
-            this._numberText.style.color = newValue;
-        }
+        // No longer handling data-text-color via attributeChangedCallback
     }
 }
 
@@ -60,7 +55,7 @@ customElements.define('lotto-ball', LottoBall);
 document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-button');
     const lottoBallsContainer = document.getElementById('lotto-balls-container');
-    const rowIndicatorsContainer = document.getElementById('row-indicators-container'); // New: get row indicators container
+    // const rowIndicatorsContainer = document.getElementById('row-indicators-container'); // Removed
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
@@ -72,8 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
-        // Re-display existing (empty) balls with new theme and update row indicator colors
-        displayNumbers(false);
+        // No need to re-render balls here; CSS variables will handle it
     }
 
     if (themeToggle) {
@@ -96,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers() {
         const numbers = new Set();
-        while (numbers.size < 30) {
+        while (numbers.size < 6) { // Reverted to 6 numbers per set
             const randomNumber = Math.floor(Math.random() * 45) + 1;
             numbers.add(randomNumber);
         }
@@ -106,30 +100,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        if (rowIndicatorsContainer) {
-            rowIndicatorsContainer.innerHTML = ''; // Clear row indicators
-        }
+        // if (rowIndicatorsContainer) { // Removed
+        //     rowIndicatorsContainer.innerHTML = ''; // Removed
+        // }
 
-        const numbers = generate ? generateLottoNumbers() : Array(30).fill('');
+        const numbers = generate ? generateLottoNumbers() : Array(6).fill(''); // Reverted to 6 placeholders
 
-        const computedHtmlStyles = getComputedStyle(htmlElement);
-        const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
+        // const computedHtmlStyles = getComputedStyle(htmlElement); // Removed
+        // const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim(); // Removed
 
-        // Generate row indicators
-        if (rowIndicatorsContainer) {
-            for (let i = 1; i <= 5; i++) { // 5 rows
-                const indicator = document.createElement('div');
-                indicator.classList.add('row-indicator');
-                indicator.textContent = i;
-                indicator.style.color = currentTextColor; // Apply theme color to indicator
-                rowIndicatorsContainer.appendChild(indicator);
-            }
-        }
+        // // Removed row indicator generation
+        // if (rowIndicatorsContainer) {
+        //     for (let i = 1; i <= 5; i++) {
+        //         const indicator = document.createElement('div');
+        //         indicator.classList.add('row-indicator');
+        //         indicator.textContent = i;
+        //         indicator.style.color = currentTextColor;
+        //         rowIndicatorsContainer.appendChild(indicator);
+        //     }
+        // }
 
         numbers.forEach(number => {
             const lottoBall = document.createElement('lotto-ball');
             lottoBall.setAttribute('number', number);
-            lottoBall.setAttribute('data-text-color', currentTextColor);
+            // lottoBall.setAttribute('data-text-color', currentTextColor); // Removed
             lottoBallsContainer.appendChild(lottoBall);
         });
     }
