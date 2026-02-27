@@ -61,12 +61,9 @@ h1 {
 
 #row-indicators-container {
     display: grid;
-    /* This needs to align with the rows of lotto balls */
-    /* Assuming 5 rows of 6 balls, each ball is 50px high + 1rem (16px) gap = 66px per row */
-    grid-template-rows: repeat(5, 66px); /* 5 rows, matching ball height + gap */
+    grid-template-rows: repeat(5, 1fr); /* 5 rows, each taking equal space */
     gap: 1rem; /* Same gap as lotto balls for vertical alignment */
-    /* No padding-top needed if grid-template-rows aligns correctly */
-    padding-left: 5px; /* Little padding for visual */
+    padding-left: 5px;
     font-size: 1rem;
     font-weight: bold;
     color: var(--text-color);
@@ -76,9 +73,10 @@ h1 {
 .row-indicator {
     display: flex;
     justify-content: flex-end; /* Align number to the right */
-    align-items: center;
-    padding-right: 5px; /* Padding from the right */
-    height: 50px; /* Match ball height */
+    align-items: center; /* Vertically center content */
+    padding-right: 5px;
+    height: 100%; /* Take full height of the grid row */
+    box-sizing: border-box; /* Include padding in height calculation */
 }
 
 
