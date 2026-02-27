@@ -14,14 +14,14 @@ class LottoBall extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 60px; /* Adjusted size for new design */
-                height: 60px; /* Adjusted size for new design */
-                background-color: var(--ball-background); /* Use CSS variable */
+                width: 60px;
+                height: 60px;
+                background-color: var(--ball-background);
                 border-radius: 50%;
-                box-shadow: var(--ball-shadow); /* Use CSS variable */
-                font-size: 1.7rem; /* Adjusted font size */
+                box-shadow: var(--ball-shadow);
+                font-size: 1.7rem;
                 font-weight: bold;
-                color: var(--ball-text-color); /* Use specific ball text color variable */
+                color: var(--ball-text-color);
                 transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
             }
         `;
@@ -51,12 +51,21 @@ customElements.define('lotto-ball', LottoBall);
 
 document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-button');
-    const numSetsInput = document.getElementById('num-sets');
+    const numSetsRange = document.getElementById('num-sets-range'); // Changed to range input
+    const numSetsValue = document.getElementById('num-sets-value'); // Span to display value
     const includedNumbersInput = document.getElementById('included-numbers');
     const excludedNumbersInput = document.getElementById('excluded-numbers');
     const lottoResultsContainer = document.getElementById('lotto-results-container');
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
+
+    // Initialize range input value display
+    if (numSetsRange && numSetsValue) {
+        numSetsValue.textContent = numSetsRange.value;
+        numSetsRange.addEventListener('input', () => {
+            numSetsValue.textContent = numSetsRange.value;
+        });
+    }
 
     function setTheme(theme) {
         htmlElement.setAttribute('data-theme', theme);
@@ -95,23 +104,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers(included = [], excluded = []) {
         const lottoNumbers = new Set(included);
-        const availableNumbers = Array.from({ length: 45 }, (_, i) => i + 1)
-                                      .filter(n => !excluded.includes(n) && !included.includes(n));
+        const allNumbers = Array.from({ length: 45 }, (_, i) => i + 1);
 
-        // Ensure included numbers are valid and don't conflict with excluded
+        // Filter out excluded numbers first
+        const availableNumbers = allNumbers.filter(n => !excluded.includes(n));
+
+        // Validate included numbers against excluded numbers
         if (included.some(n => excluded.includes(n))) {
             console.error("Included numbers conflict with excluded numbers!");
-            // Handle error, perhaps throw or return empty
+            return []; // Return empty or handle as appropriate
+        }
+        // Validate if included numbers are within 1-45 range
+        if (included.some(n => n < 1 || n > 45)) {
+            console.error("Included numbers out of range (1-45)!");
             return [];
         }
-        if (included.length > 6) {
-            console.error("Too many included numbers!");
+        // Validate if excluded numbers are within 1-45 range
+        if (excluded.some(n => n < 1 || n > 45)) {
+            console.error("Excluded numbers out of range (1-45)!");
             return [];
         }
+        
+        // Ensure that included numbers are actually available (not in excluded list)
+        const validIncluded = included.filter(n => availableNumbers.includes(n));
+        lottoNumbers.clear(); // Clear initial set if it had invalid included numbers
+        validIncluded.forEach(n => lottoNumbers.add(n));
 
-        while (lottoNumbers.size < 6 && availableNumbers.length > 0) {
-            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-            const randomNumber = availableNumbers.splice(randomIndex, 1)[0];
+
+        if (validIncluded.length > 6) {
+            console.error("Too many valid included numbers!");
+            return Array.from(validIncluded).slice(0, 6).sort((a, b) => a - b); // Return first 6 valid included
+        }
+        
+        // Now fill the rest with available numbers, avoiding already included
+        const numbersToPickFrom = availableNumbers.filter(n => !lottoNumbers.has(n));
+
+        while (lottoNumbers.size < 6 && numbersToPickFrom.length > 0) {
+            const randomIndex = Math.floor(Math.random() * numbersToPickFrom.length);
+            const randomNumber = numbersToPickFrom.splice(randomIndex, 1)[0];
             lottoNumbers.add(randomNumber);
         }
 
@@ -123,11 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(lottoNumbers).sort((a, b) => a - b);
     }
 
+
     function displayLottoSets() {
         if (!lottoResultsContainer) return;
         lottoResultsContainer.innerHTML = ''; // Clear previous results
 
-        const numSets = parseInt(numSetsInput.value) || 1;
+        const numSets = parseInt(numSetsRange.value) || 1; // Get value from range input
         const included = parseNumbersInput(includedNumbersInput.value);
         const excluded = parseNumbersInput(excludedNumbersInput.value);
 
@@ -151,6 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initial display of one empty set
-    numSetsInput.value = 1; // Default to 1 set
+    // Ensure initial display uses the default value of the range input
+    numSetsRange.value = numSetsRange.value || 1; // Set default if not already
+    numSetsValue.textContent = numSetsRange.value; // Update display
     displayLottoSets();
 });
