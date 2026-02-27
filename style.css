@@ -67,14 +67,15 @@ h1 {
     font-size: 1rem;
     font-weight: bold;
     color: var(--text-color);
-    text-align: right; /* Align numbers to the right */
+    /* text-align: right; Removed */
 }
 
 .row-indicator {
     display: flex;
-    justify-content: flex-end; /* Align number to the right */
+    justify-content: center; /* Center horizontally */
     align-items: center; /* Vertically center content */
-    padding-right: 5px;
+    padding-right: 0; /* Remove padding-right */
+    width: 30px; /* Set a fixed width */
     height: 100%; /* Take full height of the grid row */
     box-sizing: border-box; /* Include padding in height calculation */
 }
