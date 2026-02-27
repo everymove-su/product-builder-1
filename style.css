@@ -52,11 +52,14 @@ h1 {
 }
 
 #lotto-balls-container {
-    display: flex;
-    justify-content: center;
+    display: grid; /* Changed from flex to grid */
+    grid-template-columns: repeat(6, 1fr); /* 6 equal columns */
     gap: 1rem;
     margin-bottom: 2.5rem;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; Removed as grid handles wrapping */
+    max-width: 800px; /* Limit width to keep grid compact, adjust as needed */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #generate-button {

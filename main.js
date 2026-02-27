@@ -63,9 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
-    let generationCount = 0; // New: Counter for generations
-    const MAX_GENERATIONS = 5; // New: Max generations
-
     function setTheme(theme) {
         htmlElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
@@ -98,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers() {
         const numbers = new Set();
-        while (numbers.size < 6) { // Reverted to 6
+        while (numbers.size < 30) { // Changed to 30
             const randomNumber = Math.floor(Math.random() * 45) + 1;
             numbers.add(randomNumber);
         }
@@ -108,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        const numbers = generate ? generateLottoNumbers() : Array(6).fill(''); // Reverted to 6 for placeholders
+        const numbers = generate ? generateLottoNumbers() : Array(30).fill(''); // Changed to 30 for placeholders
 
         const computedHtmlStyles = getComputedStyle(htmlElement);
         const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
@@ -123,14 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (generateButton) {
         generateButton.addEventListener('click', () => {
-            if (generationCount < MAX_GENERATIONS) {
-                displayNumbers(true);
-                generationCount++;
-                if (generationCount === MAX_GENERATIONS) {
-                    generateButton.disabled = true; // Disable after max generations
-                    generateButton.textContent = 'Limit Reached';
-                }
-            }
+            displayNumbers(true); // Always generate 30 numbers
+            generateButton.disabled = false; // Ensure button is always enabled
+            generateButton.textContent = 'Generate Numbers'; // Reset text if it was changed
         });
     }
 
