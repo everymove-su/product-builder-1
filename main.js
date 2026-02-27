@@ -7,7 +7,7 @@ class LottoBall extends HTMLElement {
         wrapper.setAttribute('class', 'ball');
 
         const numberText = document.createElement('span');
-        numberText.textContent = this.getAttribute('number');
+        // numberText.textContent = this.getAttribute('number'); // Set in connectedCallback
 
         const style = document.createElement('style');
         style.textContent = `
@@ -22,13 +22,36 @@ class LottoBall extends HTMLElement {
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: var(--text-color); /* Use CSS variable for text color */
+                /* color is set dynamically via JS in connectedCallback */
             }
         `;
 
         shadow.appendChild(style);
         shadow.appendChild(wrapper);
         wrapper.appendChild(numberText);
+        this._numberText = numberText; // Store reference to update later
+    }
+
+    connectedCallback() {
+        // Set text content and color when connected to DOM
+        this._numberText.textContent = this.getAttribute('number');
+        const textColor = this.getAttribute('data-text-color');
+        if (this._numberText && textColor) {
+            this._numberText.style.color = textColor;
+        }
+    }
+
+    static get observedAttributes() {
+        return ['number', 'data-text-color'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'number' && this._numberText) {
+            this._numberText.textContent = newValue;
+        }
+        if (name === 'data-text-color' && this._numberText) {
+            this._numberText.style.color = newValue;
+        }
     }
 }
 
@@ -48,6 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
+        // Re-render balls to apply new theme color if they exist
+        // This is important because attributeChangedCallback for data-text-color relies on it
+        displayNumbers(false); // Re-display existing (empty) balls with new theme
     }
 
     if (themeToggle) {
@@ -80,11 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        const numbers = generate ? generateLottoNumbers() : Array(6).fill(''); // Create 6 empty placeholders
+        const numbers = generate ? generateLottoNumbers() : Array(6).fill('');
+
+        // Get the current computed text color from the HTML element
+        const computedHtmlStyles = getComputedStyle(htmlElement);
+        const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
 
         numbers.forEach(number => {
             const lottoBall = document.createElement('lotto-ball');
             lottoBall.setAttribute('number', number);
+            lottoBall.setAttribute('data-text-color', currentTextColor); // Pass color explicitly
             lottoBallsContainer.appendChild(lottoBall);
         });
     }
