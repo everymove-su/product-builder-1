@@ -22,13 +22,32 @@ class LottoBall extends HTMLElement {
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: red; /* Temporarily set to red for debugging */
             }
         `;
 
         shadow.appendChild(style);
         shadow.appendChild(wrapper);
         wrapper.appendChild(numberText);
+        this._numberText = numberText; // Store reference to update later
+    }
+
+    connectedCallback() {
+        // When the element is added to the DOM, apply the inherited --text-color
+        const computedStyle = getComputedStyle(this);
+        const textColor = computedStyle.getPropertyValue('--text-color');
+        if (this._numberText && textColor) {
+            this._numberText.style.color = textColor;
+        }
+    }
+
+    static get observedAttributes() {
+        return ['number'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'number' && this._numberText) {
+            this._numberText.textContent = newValue;
+        }
     }
 }
 
@@ -50,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
+        // Update LottoBall colors immediately when theme changes
+        document.querySelectorAll('lotto-ball').forEach(ball => {
+            if (ball.connectedCallback) { // Check if connectedCallback exists
+                ball.connectedCallback();
+            }
+        });
     }
 
     // Toggle theme on button click
