@@ -22,7 +22,7 @@ class LottoBall extends HTMLElement {
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: #333;
+                color: #333; /* This will be overridden by --text-color in the main CSS */
             }
         `;
 
@@ -38,6 +38,40 @@ customElements.define('lotto-ball', LottoBall);
 document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-button');
     const lottoBallsContainer = document.getElementById('lotto-balls-container');
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement; // Get the html element
+
+    // Function to set the theme
+    function setTheme(theme) {
+        htmlElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        if (theme === 'dark') {
+            themeToggle.textContent = 'Switch to Light Mode';
+        } else {
+            themeToggle.textContent = 'Switch to Dark Mode';
+        }
+    }
+
+    // Toggle theme on button click
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            if (currentTheme === 'light') {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        });
+    }
+
+    // Apply saved theme or default to dark
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        setTheme(savedTheme);
+    } else {
+        setTheme('dark'); // Default theme
+    }
+
 
     function generateLottoNumbers() {
         const numbers = new Set();
