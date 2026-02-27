@@ -22,7 +22,7 @@ class LottoBall extends HTMLElement {
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: var(--text-color); /* Use CSS variable for text color */
+                color: red; /* Temporarily set to red for debugging */
             }
         `;
 
@@ -83,13 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayNumbers() {
-        if (!lottoBallsContainer) return;
+        console.log('displayNumbers function called.');
+        if (!lottoBallsContainer) {
+            console.error('lottoBallsContainer not found!');
+            return;
+        }
         lottoBallsContainer.innerHTML = '';
         const numbers = generateLottoNumbers();
+        console.log('Generated numbers:', numbers);
         numbers.forEach(number => {
             const lottoBall = document.createElement('lotto-ball');
             lottoBall.setAttribute('number', number);
             lottoBallsContainer.appendChild(lottoBall);
+            console.log('Appended lotto-ball with number:', number);
         });
     }
 
