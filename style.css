@@ -54,7 +54,7 @@ h1 {
 .lotto-display-area {
     display: flex; /* Use flexbox to align row indicators and balls */
     align-items: center; /* Align items to center vertically */
-    gap: 10px; /* Space between indicators and balls */
+    gap: 5px; /* Reduced space between indicators and balls */
     margin-bottom: 2.5rem;
     position: relative; /* For absolute positioning if needed */
 }
