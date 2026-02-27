@@ -54,7 +54,7 @@ h1 {
 .lotto-display-area {
     display: flex; /* Use flexbox to align row indicators and balls */
     align-items: center; /* Align items to center vertically */
-    gap: 5px; /* Reduced space between indicators and balls */
+    gap: 0px; /* Removed space between indicators and balls */
     margin-bottom: 2.5rem;
     position: relative; /* For absolute positioning if needed */
 }
@@ -63,7 +63,7 @@ h1 {
     display: grid;
     grid-template-rows: repeat(5, 1fr); /* 5 rows, each taking equal space */
     gap: 1rem; /* Same gap as lotto balls for vertical alignment */
-    padding-left: 5px;
+    padding-left: 0px; /* Remove padding-left */
     font-size: 1rem;
     font-weight: bold;
     color: var(--text-color);
@@ -72,10 +72,10 @@ h1 {
 
 .row-indicator {
     display: flex;
-    justify-content: center; /* Center horizontally */
+    justify-content: flex-start; /* Align number to the start (left) */
     align-items: center; /* Vertically center content */
     padding-right: 0; /* Remove padding-right */
-    width: 30px; /* Set a fixed width */
+    width: 20px; /* Make width smaller to fit closer */
     height: 100%; /* Take full height of the grid row */
     box-sizing: border-box; /* Include padding in height calculation */
 }
