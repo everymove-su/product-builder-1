@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers() {
         const numbers = new Set();
-        while (numbers.size < 6) {
+        while (numbers.size < 5) { // Changed from 6 to 5
             const randomNumber = Math.floor(Math.random() * 45) + 1;
             numbers.add(randomNumber);
         }
@@ -106,16 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        const numbers = generate ? generateLottoNumbers() : Array(6).fill('');
+        const numbers = generate ? generateLottoNumbers() : Array(5).fill(''); // Changed from 6 to 5 for placeholders
 
-        // Get the current computed text color from the HTML element
         const computedHtmlStyles = getComputedStyle(htmlElement);
         const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
 
         numbers.forEach(number => {
             const lottoBall = document.createElement('lotto-ball');
             lottoBall.setAttribute('number', number);
-            lottoBall.setAttribute('data-text-color', currentTextColor); // Pass color explicitly
+            lottoBall.setAttribute('data-text-color', currentTextColor);
             lottoBallsContainer.appendChild(lottoBall);
         });
     }
@@ -124,6 +123,5 @@ document.addEventListener('DOMContentLoaded', () => {
         generateButton.addEventListener('click', () => displayNumbers(true));
     }
 
-    // Initial display: empty balls
     displayNumbers(false);
 });
