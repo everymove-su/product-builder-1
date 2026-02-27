@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
+    let generationCount = 0; // New: Counter for generations
+    const MAX_GENERATIONS = 5; // New: Max generations
+
     function setTheme(theme) {
         htmlElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
@@ -72,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
         // Re-render balls to apply new theme color if they exist
-        // This is important because attributeChangedCallback for data-text-color relies on it
         displayNumbers(false); // Re-display existing (empty) balls with new theme
     }
 
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers() {
         const numbers = new Set();
-        while (numbers.size < 5) { // Changed from 6 to 5
+        while (numbers.size < 6) { // Reverted to 6
             const randomNumber = Math.floor(Math.random() * 45) + 1;
             numbers.add(randomNumber);
         }
@@ -106,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        const numbers = generate ? generateLottoNumbers() : Array(5).fill(''); // Changed from 6 to 5 for placeholders
+        const numbers = generate ? generateLottoNumbers() : Array(6).fill(''); // Reverted to 6 for placeholders
 
         const computedHtmlStyles = getComputedStyle(htmlElement);
         const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
@@ -120,8 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (generateButton) {
-        generateButton.addEventListener('click', () => displayNumbers(true));
+        generateButton.addEventListener('click', () => {
+            if (generationCount < MAX_GENERATIONS) {
+                displayNumbers(true);
+                generationCount++;
+                if (generationCount === MAX_GENERATIONS) {
+                    generateButton.disabled = true; // Disable after max generations
+                    generateButton.textContent = 'Limit Reached';
+                }
+            }
+        });
     }
 
+    // Initial display: empty balls
     displayNumbers(false);
 });
