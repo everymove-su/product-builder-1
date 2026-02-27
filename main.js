@@ -22,7 +22,7 @@ class LottoBall extends HTMLElement {
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: #333; /* This will be overridden by --text-color in the main CSS */
+                color: var(--text-color); /* Use CSS variable for text color */
             }
         `;
 
