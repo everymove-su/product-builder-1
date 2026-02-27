@@ -1,57 +1,57 @@
-class LottoBall extends HTMLElement {
-    constructor() {
-        super();
-        const shadow = this.attachShadow({ mode: 'open' });
+// class LottoBall extends HTMLElement { // Temporarily comment out custom element
+//     constructor() {
+//         super();
+//         const shadow = this.attachShadow({ mode: 'open' });
 
-        const wrapper = document.createElement('div');
-        wrapper.setAttribute('class', 'ball');
+//         const wrapper = document.createElement('div');
+//         wrapper.setAttribute('class', 'ball');
 
-        const numberText = document.createElement('span');
-        numberText.textContent = this.getAttribute('number');
+//         const numberText = document.createElement('span');
+//         numberText.textContent = this.getAttribute('number');
 
-        const style = document.createElement('style');
-        style.textContent = `
-            .ball {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 60px;
-                height: 60px;
-                background: var(--ball-background, linear-gradient(145deg, #f0f0f0, #cacaca));
-                border-radius: 50%;
-                box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
-                font-size: 1.5rem;
-                font-weight: bold;
-            }
-        `;
+//         const style = document.createElement('style');
+//         style.textContent = `
+//             .ball {
+//                 display: flex;
+//                 justify-content: center;
+//                 align-items: center;
+//                 width: 60px;
+//                 height: 60px;
+//                 background: var(--ball-background, linear-gradient(145deg, #f0f0f0, #cacaca));
+//                 border-radius: 50%;
+//                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
+//                 font-size: 1.5rem;
+//                 font-weight: bold;
+//             }
+//         `;
 
-        shadow.appendChild(style);
-        shadow.appendChild(wrapper);
-        wrapper.appendChild(numberText);
-        this._numberText = numberText; // Store reference to update later
-    }
+//         shadow.appendChild(style);
+//         shadow.appendChild(wrapper);
+//         wrapper.appendChild(numberText);
+//         this._numberText = numberText; // Store reference to update later
+//     }
 
-    connectedCallback() {
-        // When the element is added to the DOM, apply the inherited --text-color
-        const computedStyle = getComputedStyle(this);
-        const textColor = computedStyle.getPropertyValue('--text-color');
-        if (this._numberText && textColor) {
-            this._numberText.style.color = textColor;
-        }
-    }
+//     connectedCallback() {
+//         // When the element is added to the DOM, apply the inherited --text-color
+//         const computedStyle = getComputedStyle(this);
+//         const textColor = computedStyle.getPropertyValue('--text-color');
+//         if (this._numberText && textColor) {
+//             this._numberText.style.color = textColor;
+//         }
+//     }
 
-    static get observedAttributes() {
-        return ['number'];
-    }
+//     static get observedAttributes() {
+//         return ['number'];
+//     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'number' && this._numberText) {
-            this._numberText.textContent = newValue;
-        }
-    }
-}
+//     attributeChangedCallback(name, oldValue, newValue) {
+//         if (name === 'number' && this._numberText) {
+//             this._numberText.textContent = newValue;
+//         }
+//     }
+// }
 
-customElements.define('lotto-ball', LottoBall);
+// customElements.define('lotto-ball', LottoBall); // Temporarily comment out custom element definition
 
 // Wait for the DOM to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,11 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
         // Update LottoBall colors immediately when theme changes
-        document.querySelectorAll('lotto-ball').forEach(ball => {
-            if (ball.connectedCallback) { // Check if connectedCallback exists
-                ball.connectedCallback();
-            }
-        });
+        // document.querySelectorAll('lotto-ball').forEach(ball => { // Temporarily comment out for testing
+        //     if (ball.connectedCallback) {
+        //         ball.connectedCallback();
+        //     }
+        // });
     }
 
     // Toggle theme on button click
@@ -117,10 +117,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const numbers = generateLottoNumbers();
         console.log('Generated numbers:', numbers);
         numbers.forEach(number => {
-            const lottoBall = document.createElement('lotto-ball');
-            lottoBall.setAttribute('number', number);
-            lottoBallsContainer.appendChild(lottoBall);
-            console.log('Appended lotto-ball with number:', number);
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = number;
+            tempDiv.style.width = '60px';
+            tempDiv.style.height = '60px';
+            tempDiv.style.borderRadius = '50%';
+            tempDiv.style.display = 'flex';
+            tempDiv.style.justifyContent = 'center';
+            tempDiv.style.alignItems = 'center';
+            tempDiv.style.fontSize = '1.5rem';
+            tempDiv.style.fontWeight = 'bold';
+            tempDiv.style.backgroundColor = 'lightblue'; // A clearly visible background
+            tempDiv.style.color = 'black'; // A clearly visible text color
+            tempDiv.style.boxShadow = '5px 5px 15px rgba(0,0,0,0.5)'; // Add some shadow
+
+            lottoBallsContainer.appendChild(tempDiv);
+            console.log('Appended temporary div with number:', number);
         });
     }
 
