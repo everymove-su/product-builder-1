@@ -51,15 +51,45 @@ h1 {
     margin-bottom: 2rem;
 }
 
+.lotto-display-area {
+    display: flex; /* Use flexbox to align row indicators and balls */
+    align-items: center; /* Align items to center vertically */
+    gap: 10px; /* Space between indicators and balls */
+    margin-bottom: 2.5rem;
+    position: relative; /* For absolute positioning if needed */
+}
+
+#row-indicators-container {
+    display: grid;
+    /* This needs to align with the rows of lotto balls */
+    /* Assuming 5 rows of 6 balls, each ball is 50px high + 1rem (16px) gap = 66px per row */
+    grid-template-rows: repeat(5, 66px); /* 5 rows, matching ball height + gap */
+    gap: 1rem; /* Same gap as lotto balls for vertical alignment */
+    /* No padding-top needed if grid-template-rows aligns correctly */
+    padding-left: 5px; /* Little padding for visual */
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: right; /* Align numbers to the right */
+}
+
+.row-indicator {
+    display: flex;
+    justify-content: flex-end; /* Align number to the right */
+    align-items: center;
+    padding-right: 5px; /* Padding from the right */
+    height: 50px; /* Match ball height */
+}
+
+
 #lotto-balls-container {
     display: grid; /* Changed from flex to grid */
     grid-template-columns: repeat(6, 1fr); /* 6 equal columns */
     gap: 1rem;
-    margin-bottom: 2.5rem;
     /* flex-wrap: wrap; Removed as grid handles wrapping */
     max-width: 800px; /* Limit width to keep grid compact, adjust as needed */
-    margin-left: auto;
-    margin-right: auto;
+    /* margin-left: auto;
+    margin-right: auto; */ /* Removed as parent flex handles centering */
 }
 
 #generate-button {

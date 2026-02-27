@@ -15,12 +15,12 @@ class LottoBall extends HTMLElement {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 60px;
-                height: 60px;
+                width: 50px; /* Smaller width */
+                height: 50px; /* Smaller height */
                 background: var(--ball-background, linear-gradient(145deg, #f0f0f0, #cacaca));
                 border-radius: 50%;
                 box-shadow: var(--ball-shadow, 5px 5px 15px #121212, -5px -5px 15px #222222);
-                font-size: 1.5rem;
+                font-size: 1.2rem; /* Smaller font size */
                 font-weight: bold;
                 /* color is set dynamically via JS in connectedCallback */
             }
@@ -60,6 +60,7 @@ customElements.define('lotto-ball', LottoBall);
 document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-button');
     const lottoBallsContainer = document.getElementById('lotto-balls-container');
+    const rowIndicatorsContainer = document.getElementById('row-indicators-container'); // New: get row indicators container
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
@@ -71,8 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             themeToggle.textContent = 'Switch to Dark Mode';
         }
-        // Re-render balls to apply new theme color if they exist
-        displayNumbers(false); // Re-display existing (empty) balls with new theme
+        // Re-display existing (empty) balls with new theme and update row indicator colors
+        displayNumbers(false);
     }
 
     if (themeToggle) {
@@ -95,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateLottoNumbers() {
         const numbers = new Set();
-        while (numbers.size < 30) { // Changed to 30
+        while (numbers.size < 30) {
             const randomNumber = Math.floor(Math.random() * 45) + 1;
             numbers.add(randomNumber);
         }
@@ -105,10 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayNumbers(generate = true) {
         if (!lottoBallsContainer) return;
         lottoBallsContainer.innerHTML = '';
-        const numbers = generate ? generateLottoNumbers() : Array(30).fill(''); // Changed to 30 for placeholders
+        if (rowIndicatorsContainer) {
+            rowIndicatorsContainer.innerHTML = ''; // Clear row indicators
+        }
+
+        const numbers = generate ? generateLottoNumbers() : Array(30).fill('');
 
         const computedHtmlStyles = getComputedStyle(htmlElement);
         const currentTextColor = computedHtmlStyles.getPropertyValue('--text-color').trim();
+
+        // Generate row indicators
+        if (rowIndicatorsContainer) {
+            for (let i = 1; i <= 5; i++) { // 5 rows
+                const indicator = document.createElement('div');
+                indicator.classList.add('row-indicator');
+                indicator.textContent = i;
+                indicator.style.color = currentTextColor; // Apply theme color to indicator
+                rowIndicatorsContainer.appendChild(indicator);
+            }
+        }
 
         numbers.forEach(number => {
             const lottoBall = document.createElement('lotto-ball');
@@ -120,12 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (generateButton) {
         generateButton.addEventListener('click', () => {
-            displayNumbers(true); // Always generate 30 numbers
-            generateButton.disabled = false; // Ensure button is always enabled
-            generateButton.textContent = 'Generate Numbers'; // Reset text if it was changed
+            displayNumbers(true);
+            generateButton.disabled = false;
+            generateButton.textContent = 'Generate Numbers';
         });
     }
 
-    // Initial display: empty balls
     displayNumbers(false);
 });
